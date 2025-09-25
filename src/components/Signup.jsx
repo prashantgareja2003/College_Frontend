@@ -13,6 +13,8 @@ function Signup() {
     const [otp, setOtp] = useState("");
     const [step, setStep] = useState(1);
     const [generatedOtp, setGeneratedOtp] = useState("");
+    const [loading, setLoading] = useState(false);
+
     const navigate = useNavigate();
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -38,14 +40,35 @@ function Signup() {
             alert("Invalid OTP. Try again.");
         }
     };
-    useEffect(()=>{
-        if(step === 3){
-            const timer = setTimeout(() => {
-                navigate('/Welcome')
-            }, 3000);
-            return ()=>clearTimeout(timer);
-        }
-    },[step,navigate])
+function Loader() {
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+      <div className="flex space-x-2">
+        {[...Array(6)].map((_, i) => (
+          <div
+            key={i}
+            className="w-4 h-4 bg-green-500 rounded-full animate-bounce"
+            style={{
+              animationDelay: `${i * 0.15}s`,
+              opacity: 0.6,
+            }}
+          ></div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+    // inside Signup component
+
+const handleFinalClick = () => {
+    setLoading(true);
+    const redirectTimer = setTimeout(() => {
+        navigate("/Welcome");
+    }, 3000);
+    return () => clearTimeout(redirectTimer);
+};
+
 
     const steps = [
         { number: 1, title: "Personal Details", description: "Enter your basic information" },
@@ -56,19 +79,20 @@ function Signup() {
     return (
         <div className="min-h-screen relative bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 flex items-center justify-center p-4 overflow-hidden">
             {/* Animated Background Elements */}
+            {loading && <Loader />}
             <div className="absolute inset-0 overflow-hidden">
                 {/* Floating orbs */}
                 <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse"></div>
                 <div className="absolute top-40 right-10 w-96 h-96 bg-gradient-to-r from-blue-400/15 to-cyan-400/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
                 <div className="absolute bottom-20 left-1/4 w-64 h-64 bg-gradient-to-r from-emerald-400/20 to-teal-400/20 rounded-full blur-3xl animate-pulse delay-2000"></div>
-                
+
                 {/* Geometric patterns */}
                 <div className="absolute top-0 left-0 w-full h-full">
                     <div className="absolute top-1/4 left-1/3 w-2 h-2 bg-white/20 rotate-45 animate-ping delay-300"></div>
                     <div className="absolute top-3/4 right-1/4 w-3 h-3 bg-purple-300/30 rotate-45 animate-ping delay-700"></div>
                     <div className="absolute bottom-1/3 left-1/5 w-2 h-2 bg-pink-300/25 rotate-45 animate-ping delay-1100"></div>
                 </div>
-                
+
                 {/* Gradient mesh overlay */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-black/20 via-transparent to-black/10"></div>
             </div>
@@ -77,14 +101,14 @@ function Signup() {
             <div className="relative bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-2xl w-full max-w-6xl overflow-hidden">
                 {/* Glass morphism overlay */}
                 <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-white/2 to-transparent rounded-3xl"></div>
-                
+
                 <div className="relative flex h-auto min-h-[600px]">
                     {/* Left Side - Progress Section */}
                     <div className="w-2/5 bg-gradient-to-br from-purple-600/30 via-indigo-600/25 to-blue-600/30 p-6 md:p-8 lg:p-12 flex flex-col relative overflow-hidden">
                         {/* Decorative elements */}
                         <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/10 to-transparent rounded-full blur-2xl"></div>
                         <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-purple-400/20 to-transparent rounded-full blur-xl"></div>
-                        
+
                         {/* Logo */}
                         <div className="flex items-center gap-2 lg:gap-3 mb-8 lg:mb-12 relative z-10">
                             <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-purple-400 via-purple-500 to-blue-500 rounded-xl flex items-center justify-center text-white font-bold text-sm lg:text-lg shadow-lg shadow-purple-500/25">
@@ -98,25 +122,22 @@ function Signup() {
                             {steps.map((stepItem, index) => (
                                 <div key={stepItem.number} className="flex items-start gap-3 lg:gap-4">
                                     <div className="flex flex-col items-center flex-shrink-0">
-                                        <div className={`w-10 h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center font-semibold text-xs lg:text-sm transition-all duration-500 ${
-                                            step >= stepItem.number
-                                                ? 'bg-gradient-to-r from-orange-400 via-orange-500 to-pink-500 text-white shadow-lg shadow-orange-500/25 scale-110'
-                                                : 'bg-white/10 text-white/60 border border-white/30 backdrop-blur-sm'
-                                        }`}>
+                                        <div className={`w-10 h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center font-semibold text-xs lg:text-sm transition-all duration-500 ${step >= stepItem.number
+                                            ? 'bg-gradient-to-r from-orange-400 via-orange-500 to-pink-500 text-white shadow-lg shadow-orange-500/25 scale-110'
+                                            : 'bg-white/10 text-white/60 border border-white/30 backdrop-blur-sm'
+                                            }`}>
                                             {step > stepItem.number ? '✓' : stepItem.number}
                                         </div>
                                         {index < steps.length - 1 && (
-                                            <div className={`w-px h-12 lg:h-16 mt-2 transition-all duration-500 ${
-                                                step > stepItem.number 
-                                                    ? 'bg-gradient-to-b from-orange-400 via-purple-500 to-blue-500 shadow-sm' 
-                                                    : 'bg-white/30'
-                                            }`}></div>
+                                            <div className={`w-px h-12 lg:h-16 mt-2 transition-all duration-500 ${step > stepItem.number
+                                                ? 'bg-gradient-to-b from-orange-400 via-purple-500 to-blue-500 shadow-sm'
+                                                : 'bg-white/30'
+                                                }`}></div>
                                         )}
                                     </div>
                                     <div className="pt-2 lg:pt-3 min-w-0">
-                                        <h3 className={`font-semibold text-sm lg:text-base transition-all duration-300 ${
-                                            step >= stepItem.number ? 'text-white drop-shadow-sm' : 'text-white/60'
-                                        }`}>
+                                        <h3 className={`font-semibold text-sm lg:text-base transition-all duration-300 ${step >= stepItem.number ? 'text-white drop-shadow-sm' : 'text-white/60'
+                                            }`}>
                                             {stepItem.title}
                                         </h3>
                                         <p className="text-white/50 text-xs lg:text-sm mt-1 leading-tight">{stepItem.description}</p>
@@ -131,7 +152,7 @@ function Signup() {
                         {/* Decorative background elements */}
                         <div className="absolute top-4 right-4 w-16 h-16 bg-gradient-to-br from-purple-400/10 to-pink-400/10 rounded-full blur-xl"></div>
                         <div className="absolute bottom-4 left-4 w-20 h-20 bg-gradient-to-tr from-blue-400/10 to-cyan-400/10 rounded-full blur-xl"></div>
-                        
+
                         {step === 1 && (
                             <div className="relative z-10">
                                 <h1 className="text-2xl lg:text-3xl font-bold text-white mb-2 drop-shadow-lg">Create Account</h1>
@@ -212,14 +233,14 @@ function Signup() {
                                             </span>
                                         </div>
                                     </div>
-                                    
+
                                     <button
                                         onClick={handleSignup}
                                         className="w-full bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 text-white py-3 px-6 rounded-xl font-semibold hover:from-emerald-600 hover:via-green-600 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-green-400/60 focus:ring-offset-2 focus:ring-offset-transparent transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] text-sm lg:text-base shadow-lg shadow-green-500/25"
                                     >
                                         Continue to Verification
                                     </button>
-                                    
+
                                     <p className="text-white/80 text-sm mt-4 text-center">
                                         Already have an account?{" "}
                                         <a href="/" className="text-green-300 font-semibold hover:text-green-200 transition-colors duration-300 hover:underline">
@@ -305,7 +326,7 @@ function Signup() {
 
                                 <button
                                     className="w-full bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 text-white py-3 px-6 rounded-xl font-semibold hover:from-emerald-600 hover:via-green-600 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-green-400/60 focus:ring-offset-2 focus:ring-offset-transparent transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] text-sm lg:text-base shadow-lg shadow-green-500/25"
-                                >
+                                onClick={handleFinalClick}>
                                     Get Started with Learning
                                 </button>
                             </div>
