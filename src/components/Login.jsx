@@ -1,27 +1,40 @@
 import React, { useState } from "react";
+import axios from 'axios'
+import { useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("Student");
+  const [role, setRole] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  const navigate = useNavigate();
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
       // Replace with your axios call
-      // await axios.post("https://localhost:7135/api/Main/LoginUser", {
-      //   email,
-      //   password,
-      //   role,
-      // });
-      
-      // Simulated API call for demo
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      console.log({ email, password, role });
+      let obj = {
+        mail: email,
+        pass: password,
+        role: role
+      }
+      debugger
+      await axios.post("https://localhost:7135/api/Main/LoginUser", obj).then(Response => {
+        if (Response.status === 200) {
+          toast.success("Login Successfully!");
+          const redirectTimer = setTimeout(() => {
+             navigate("/think-build");
+          }, 3000);
+          return () => clearTimeout(redirectTimer);
+        } else {
+          toast.error("Login failed");
+        }
+      }).catch(err => {
+        console.error(err);
+      })
     } catch (error) {
       console.error(error);
     } finally {
@@ -86,6 +99,35 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          style: {
+            backdropFilter: "blur(10px)",
+            color: "#fff",
+            border: "1px solid rgba(255,255,255,0.2)",
+            borderRadius: "12px",
+            padding: "16px 24px",
+            minWidth: "340px",
+          },
+          success: {
+            style: {
+              background: "rgba(16, 185, 129, 0.8)", // green
+            },
+          },
+          error: {
+            style: {
+              background: "rgba(239, 68, 68, 0.8)", // red
+            },
+          },
+          // default / warning style
+          default: {
+            style: {
+              background: "rgba(250, 204, 21, 0.8)", // yellow
+            },
+          },
+        }}
+      />
       <div className="w-full max-w-md">
         {/* Login Card */}
         <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200">
@@ -94,7 +136,7 @@ const Login = () => {
             <h2 className="text-2xl font-bold text-gray-800 mb-2">
               Welcome Back
             </h2>
-            <p className="text-gray-600 flex justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-in-icon lucide-log-in"><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/></svg></p>
+            <p className="text-gray-600 flex justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-log-in-icon lucide-log-in"><path d="m10 17 5-5-5-5" /><path d="M15 12H3" /><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" /></svg></p>
           </div>
 
           <div className="space-y-5">
