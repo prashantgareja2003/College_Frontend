@@ -4,7 +4,7 @@ import LandindPage from './components/LandindPage'
 import Login from './components/Login'
 import Signup from './components/Signup'
 import Scheduletour from './components/scheduletour'
-import { ThinkBuild } from './components/ThinkBuild'
+import Dashboard from './components/Dashboard'
 
 const router = createBrowserRouter([
     {
@@ -24,9 +24,9 @@ const router = createBrowserRouter([
         element: <Scheduletour />
     },
     {
-        path: "/think-build",
-        element: <ThinkBuild />
-    },
+        path: "/dashboard",
+        element: <Dashboard />
+    }
 ])
 
 const Routing = () => {
